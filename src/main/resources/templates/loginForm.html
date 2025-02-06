@@ -51,10 +51,12 @@
                     .done(function(data, status, xhr) { // 요청 성공 처리
                         const token = xhr.getResponseHeader("Authorization"); // JWT 토큰
                         const userId = xhr.getResponseHeader("userId"); // 사용자 ID
+                        const role = xhr.getResponseHeader("role");
                         if (token) {
                             // 토큰 및 사용자 ID를 로컬 스토리지에 저장
                             localStorage.setItem("authToken", token);
                             localStorage.setItem("userId", userId);
+                            localStorage.setItem("role", role);
                             //alert("로그인 성공!");
                             // 모달을 닫음
                             var loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));

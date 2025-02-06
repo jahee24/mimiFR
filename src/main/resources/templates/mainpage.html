@@ -65,6 +65,10 @@
             background-color: #ffc107;
             color: white;
         }
+        .btn-manbtn{
+            background-color: silver;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -76,11 +80,11 @@
             <a class="navbar-brand" href="http://127.0.0.1:5675">
                 <img src="/images/logo.png" alt="Logo">
             </a>
-            
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
@@ -104,7 +108,7 @@
                     </a>
                     <!-- 로그아웃 버튼 -->
                     <button class="btn custom-btn btn-danger" id="logoutBtn" style="display: none;">로그아웃</button>
-                    <a th:href="@{/equipment/list}"><button class="btn ">관리자 </button></a>
+                    <a th:href="@{/equipment/list}"><button class="btn custom-btn btn-manbtn" id="manbtn">관리자 </button></a>
 
                 </div></div>
         </div>
@@ -151,10 +155,53 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // 토큰에서 사용자 정보를 가져와서 폼에 설정하는 함수
+        function setUserInfo() {
+            // 토큰에서 사용자 정보를 가져오는 로직 구현 필요
+            const token = localStorage.getItem('authToken');
+            const id = localStorage.getItem('userId');
+            // 토큰 디코딩 및 사용자 정보 추출 후
+
+            if (token) {
+                // JWT 토큰 디코딩
+                const decodedToken = parseJwt(token);
+
+                // 디코딩된 토큰에서 사용자 정보 추출
+                const role = decodedToken.role;          // role 값 추출
+                console.log(role);
+              if (role===true) {
+
+                    $("#manbtn").show();
+                }else {
+                    $("#manbtn").hide();
+
+                }
+            } else {
+                console.log("토큰이 존재하지 않습니다.");
+            }
+
+            // document.getElementById('userName').value = id.valueOf(); // 토큰에서 가져온 값으로 설
+        }
+
+        function parseJwt(token) {
+            // JWT의 두 번째 부분 (payload)은 base64Url로 인코딩되어 있음
+            var base64Url = token.split('.')[1];
+
+            // base64Url -> base64 변환 (URL-safe base64 변환)
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+
+            // base64 디코딩 후, JSON 형태로 변환
+            var jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            // JSON 객체로 반환
+            return JSON.parse(jsonPayload);
+        }
         $(document).ready(function() {
             // 페이지 로드 시 로그인 상태 확인
             checkLoginStatus();
-
+            setUserInfo();
 
             // 로그인 버튼 클릭 시 로그인 모달 HTML 불러오기
             $("#loginBtn").on("click", function() {
@@ -175,10 +222,18 @@
                 beforeSend: function(response) {
                     const authToken = localStorage.getItem("authToken");
                     const userId = localStorage.getItem("userId");
+                    const role = localStorage.getItem("role");
                     if (authToken) {
                         response.setRequestHeader("Authorization", authToken);
                         response.setRequestHeader("userId", userId);
-                    }
+                        response.setRequestHeader("role",role );
+                        // if(role===true){
+                        //     $("#manbtn").show(); // 로그아웃 버튼 보이기
+                        // }else{
+                        //     $("#manbtn").hide();
+                        // }
+                        //
+                         }
                 }
             });
             // 로그아웃 버튼 클릭 시
@@ -186,6 +241,7 @@
                 // 로컬 스토리지에서 토큰 제거
                 localStorage.removeItem("authToken");
                 localStorage.removeItem("userId");
+                localStorage.removeItem("role");
 
                 location.reload();
             });
@@ -198,12 +254,19 @@
                     $("#registerBtn").hide(); // 로그인/회원가입 버튼 숨기기
                     $("#mypageBtn").show(); // 마이페이지 버튼 보이기
                     $("#logoutBtn").show(); // 로그아웃 버튼 보이기
+                    if (localStorage.getItem("role")===true) {
+                        $("#manbtn").show(); // 로그아웃 버튼 보이기
+                    }else {
+                        $("#manbtn").hide(); // 로그아웃 버튼 숨기기
+                    }
                 } else {
                     // 로그인 안된 상태일 경우
                     $("#loginBtn").show(); // 로그인/회원가입 버튼 보이기
                     $("#registerBtn").show(); // 로그인/회원가입 버튼 보이기
                     $("#mypageBtn").hide(); // 마이페이지 버튼 숨기기
                     $("#logoutBtn").hide(); // 로그아웃 버튼 숨기기
+                    $("#manbtn").hide(); // 로그아웃 버튼 숨기기
+
                 }
             }
         });

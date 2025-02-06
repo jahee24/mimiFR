@@ -17,24 +17,6 @@
             height: 40px;
         }
 
-        /* 버튼 스타일 */
-        .custom-btn {
-            padding: 0.8rem 2rem;
-            border-radius: 30px;
-            font-weight: 600;
-        }
-
-        .btn-login {
-            background-color: #007bff;
-            color: white;
-            margin-right: 10px;
-        }
-
-        .btn-signup {
-            background-color: #28a745;
-            color: white;
-        }
-
         body {
             font-family: 'Pretendard', sans-serif;
         }
@@ -54,7 +36,6 @@
     </style>
     <script>
         $(document).ready(function () {
-            // /rental/findall에서 데이터를 가져와 테이블에 표시
             $.ajax({
                 type: "GET",
                 url: "http://127.0.0.1:5676/rental/findall",
@@ -82,7 +63,6 @@
         });
 
         function updateRentalWithFilteredData(item, userId, rentalId) {
-            // Step 1: /equipment/findAll 요청으로 모든 장비 데이터 가져오기
             $.ajax({
                 url: "http://127.0.0.1:5676/equipment/findAll",
                 type: "GET",
@@ -95,7 +75,6 @@
 
                     const categories = ["MOUSE", "LAPTOP", "CHARGER"];
 
-                    // Step 2: JavaScript 내부에서 필터링 처리
                     const filteredItems = equipmentList.filter(eq =>
                         categories.includes(eq.category) && eq.category === item && eq.status === "RENTAL"
                     );
@@ -105,39 +84,42 @@
                         return;
                     }
 
-                    // Step 3: mgmNum 체크 및 업데이트 (첫 번째 매칭 항목만 처리)
-                    const selectedItem = filteredItems[0]; // 매칭된 첫 번째 항목 선택
-
-                    // mgmNum이 null인지 확인
-                    if (!selectedItem.mgmNum) { // null 또는 undefined 체크
-                        alert("장비의 mgmNum이 비어 있습니다. 업데이트를 중단합니다.");
-                        return;
-                    }
-
-                    // mgmNum 업데이트
                     $.ajax({
-                        url: "http://127.0.0.1:5676/rental/updatemgmnum",
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify({
-                            rentalId: rentalId,
-                            userId: userId,
-                            mgmNum: selectedItem.mgmNum,
-                        }),
-                        success: function () {
-                            // mgmNum 업데이트 후, 매칭된 항목의 status를 "USING"으로 변경
+                        url: `http://127.0.0.1:5676/rental/find`,
+                        type: "GET",
+                        data:({
+                        rentalId: rentalId}),
+                        success: function (rentalData) {
+
+                            if (rentalData.mgmNum !== null) {
+                                alert("이 대여 항목의 mgmNum이 이미 설정되어 있습니다.");
+                                return;
+                            }
+
+                            const selectedItem = filteredItems[0]; // 매칭된 첫 번째 항목 선택
+
                             $.ajax({
-                                url: "http://127.0.0.1:5676/equipment/updateStatus",
+                                url: "http://127.0.0.1:5676/rental/updatemgmnum",
                                 type: "POST",
                                 contentType: "application/json",
                                 data: JSON.stringify({
+                                    rentalId: rentalId,
+                                    userId: userId,
                                     mgmNum: selectedItem.mgmNum,
-                                    status: "USING", // 상태를 USING으로 변경
                                 }),
                                 success: function () {
-                                    alert(`장비 상태가 "USING"으로 변경되었습니다.`);
-                                    // 완료된 항목의 버튼을 숨김
-                                    $(`#requestList tbody:has(button[onclick="updateRentalWithFilteredData('${item}', '${userId}', '${rentalId}')"]) button`).hide();
+                                    $.ajax({
+                                        url: "http://127.0.0.1:5676/equipment/updateStatus",
+                                        type: "POST",
+                                        contentType: "application/json",
+                                        data: JSON.stringify({
+                                            mgmNum: selectedItem.mgmNum,
+                                            status: "USING", // 상태를 USING으로 변경
+                                        }),
+                                        success: function () {
+                                            alert(`장비 상태가 "USING"으로 변경되었습니다.`);
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -145,7 +127,6 @@
                 }
             });
         }
-
         function loadRentalData() {
             $.ajax({
                 type: "GET",
@@ -209,10 +190,6 @@
                     </li>
                 </ul>
 
-                <div class="d-flex">
-                    <button class="btn custom-btn btn-login">로그인</button>
-                    <button class="btn custom-btn btn-signup">회원가입</button>
-                </div>
             </div>
         </div>
     </nav>
