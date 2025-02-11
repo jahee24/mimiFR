@@ -38,7 +38,7 @@
         $(document).ready(function () {
             $.ajax({
                 type: "GET",
-                url: "http://127.0.0.1:5676/rental/findall",
+                url: "http://192.168.56.113/rental/findall",
                 dataType: "json",
                 success: function (response) {
                     console.log(response);
@@ -64,7 +64,7 @@
 
         function updateRentalWithFilteredData(item, userId, rentalId) {
             $.ajax({
-                url: "http://127.0.0.1:5676/equipment/findAll",
+                url: "http://192.168.56.113/equipment/findAll",
                 type: "GET",
                 dataType: "json",
                 success: function (equipmentList) {
@@ -85,7 +85,7 @@
                     }
 
                     $.ajax({
-                        url: `http://127.0.0.1:5676/rental/find`,
+                        url: `http://192.168.56.113/rental/find`,
                         type: "GET",
                         data:({
                         rentalId: rentalId}),
@@ -99,7 +99,7 @@
                             const selectedItem = filteredItems[0]; // 매칭된 첫 번째 항목 선택
 
                             $.ajax({
-                                url: "http://127.0.0.1:5676/rental/updatemgmnum",
+                                url: "http://192.168.56.113/rental/updatemgmnum",
                                 type: "POST",
                                 contentType: "application/json",
                                 data: JSON.stringify({
@@ -109,7 +109,7 @@
                                 }),
                                 success: function () {
                                     $.ajax({
-                                        url: "http://127.0.0.1:5676/equipment/updateStatus",
+                                        url: "http://192.168.56.113/equipment/updateStatus",
                                         type: "POST",
                                         contentType: "application/json",
                                         data: JSON.stringify({
@@ -130,7 +130,7 @@
         function loadRentalData() {
             $.ajax({
                 type: "GET",
-                url: "http://127.0.0.1:5676/rental/findall",
+                url: "http://192.168.56.113/rental/findall",
                 dataType: "json",
                 success: function (response) {
                     const requestList = $("#requestList");
@@ -166,7 +166,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand" href="http://127.0.0.1:5675">
+            <a class="navbar-brand" href="http://192.168.56.113">
                 <img src="/images/logo.png" alt="Logo">
             </a>
 
@@ -177,7 +177,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="http://127.0.0.1:5675">홈</a>
+                        <a class="nav-link" href="http://192.168.56.113">홈</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">노트북 대여</a>

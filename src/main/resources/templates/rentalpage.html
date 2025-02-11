@@ -94,7 +94,7 @@
     <!-- 네비게이션 바 -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand" href="http://127.0.0.1:5675">
+            <a class="navbar-brand" href="http://192.168.56.113">
                 <img src="/images/logo.png" alt="Logo">
             </a>
 
@@ -105,7 +105,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="http://127.0.0.1:5675">홈</a>
+                        <a class="nav-link" href="http://192.168.56.113">홈</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/rental/insert}">노트북 대여</a>
@@ -229,7 +229,7 @@
                     // AJAX 요청 보내기
                     $.ajax({
                         type: "POST",
-                        url: "http://127.0.0.1:5676/rental/apply", // 서버 URL
+                        url: "http://192.168.56.113/rental/apply", // 서버 URL
                         data: JSON.stringify(data),
                         contentType: "application/json; charset=utf-8", // body 데이터 타입
                         dataType: "json",
@@ -242,7 +242,8 @@
                     }).fail(function (error) { // 요청 실패 시 실행
                         alert("오류 발생: " + JSON.stringify(error));
                     }).always(function () { // 요청 결과에 상관없이 항상 실행
-                        console.log("AJAX 요청 완료: " + data.rentalItem);
+                        console.log("AJAX 요청 완료: " + data.item);
+                        location.reload();
                     });
                 });
             });

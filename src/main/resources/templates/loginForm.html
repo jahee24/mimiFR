@@ -11,7 +11,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="login-form" action="http://127.0.0.1:5676/user/login" method="POST">
+                    <form id="login-form" action="http://192.168.56.113/user/login" method="POST">
                         <div class="mb-3">
                             <label for="login-email" class="form-label">이메일</label>
                             <input type="email" class="form-control" id="login-email" name="email" placeholder="이메일을 입력하세요" required>
@@ -40,7 +40,7 @@
 
                 // AJAX 요청
                 $.ajax({
-                    url: "http://127.0.0.1:5676/user/login",  // 서버의 로그인 처리 URL
+                    url: "http://192.168.56.113/user/login",  // 서버의 로그인 처리 URL
                     type: "POST",
                     contentType: "application/json",  // 데이터 타입을 JSON으로 설정
                     data: JSON.stringify({
